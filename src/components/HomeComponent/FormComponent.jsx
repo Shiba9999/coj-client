@@ -1,42 +1,160 @@
-import React from "react";
-import { Form, Button, Container, Row, Col, Tab, Nav } from "react-bootstrap";
+import React, { useState } from "react";
+import {
+  Form,
+  Button,
+  Container,
+  Row,
+  Col,
+  Tab,
+  Nav,
+  ProgressBar,
+} from "react-bootstrap";
 
 const FormComponent = () => {
+  const [formData, setFormData] = useState({
+    registration_number: "",
+    business_name: "",
+    other_business_number: "",
+    commencement_date: "",
+    renewal_date: "",
+    business_nature: "",
+    business_of_nature: "",
+    business_address: "",
+    contact_information: "",
+    business_branches: "",
+    change_name: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+console.log("formData",formData);
+  const calculatePercentage = () => {
+    const {
+      registration_number,
+      business_name,
+      other_business_number,
+      commencement_date,
+      renewal_date,
+      business_nature,
+      business_of_nature,
+      business_address,
+      contact_information,
+      business_branches,
+      change_name,
+    } = formData;
+    const filledFields = [
+      registration_number,
+      business_name,
+      other_business_number,
+      commencement_date,
+      renewal_date,
+      business_nature,
+      business_of_nature,
+      business_address,
+      contact_information,
+      business_branches,
+      change_name,
+    ].filter((field) => field !== "").length;
+    return Math.ceil((filledFields / 11) * 100); // Adjusted for 11 fields in "Business Information" tab
+  };
+
+  const [activeTab, setActiveTab] = useState("business-info");
+  const tabs = [
+    "business-info",
+    "certification",
+    "work-permit",
+    "particulars-of-applicant",
+    "attachments",
+    "declaration",
+    "signature",
+  ];
+  const handleNext = () => {
+    const currentIndex = tabs.indexOf(activeTab);
+    if (currentIndex < tabs.length - 1) {
+      setActiveTab(tabs[currentIndex + 1]);
+    }
+  };
+
+  const handlePrev = () => {
+    const currentIndex = tabs.indexOf(activeTab);
+    if (currentIndex > 0) {
+      setActiveTab(tabs[currentIndex - 1]);
+    }
+  };
+
   return (
     <Container>
       <h2 className="mb-4">Business Name Registration Form</h2>
-      <Tab.Container id="registration-tabs" defaultActiveKey="business-info">
+      <Tab.Container id="registration-tabs" activeKey={activeTab}>
+        <Nav variant="pills" className="justify-content-center mb-3">
+          <Nav.Item>
+            <Nav.Link
+              eventKey="business-info"
+              onClick={() => setActiveTab("business-info")}
+            >
+              Business Information
+              <ProgressBar
+                now={calculatePercentage()}
+                label={`${calculatePercentage()}%`}
+              />
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link
+              eventKey="certification"
+              onClick={() => setActiveTab("certification")}
+            >
+              Certification
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link
+              eventKey="work-permit"
+              onClick={() => setActiveTab("work-permit")}
+            >
+              Work Permit
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link
+              eventKey="particulars-of-applicant"
+              onClick={() => setActiveTab("particulars-of-applicant")}
+            >
+              Particulars of Applicant
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link
+              eventKey="attachments"
+              onClick={() => setActiveTab("attachments")}
+            >
+              Attachments
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link
+              eventKey="declaration"
+              onClick={() => setActiveTab("declaration")}
+            >
+              Declaration
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link
+              eventKey="signature"
+              onClick={() => setActiveTab("signature")}
+            >
+              Signature
+            </Nav.Link>
+          </Nav.Item>
+        </Nav>
         <Row>
-          <Col sm={3}>
-            <Nav variant="pills" className="flex-column">
-              <Nav.Item>
-                <Nav.Link eventKey="business-info">
-                  Business Information
-                </Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="certification">Certification</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="work-permit">Work Permit</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="particulars-of-applicant">
-                  Particulars of Applicant
-                </Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="attachments">Attachments</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="declaration">Declaration</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="signature">Signature</Nav.Link>
-              </Nav.Item>
-            </Nav>
-          </Col>
-          <Col sm={9}>
+          <Col>
             <Tab.Content>
               <Tab.Pane eventKey="business-info">
                 <Form>
@@ -53,6 +171,9 @@ const FormComponent = () => {
                       >
                         <Form.Control
                           type="number"
+                          name="registration_number"
+                          value={formData.registration_number}
+                          onChange={handleChange}
                           placeholder="Enter registration number"
                           required
                         />
@@ -70,6 +191,9 @@ const FormComponent = () => {
                       >
                         <Form.Control
                           type="text"
+                          name="business_name"
+                          value={formData.business_name}
+                          onChange={handleChange}
                           placeholder="Name of Business"
                           required
                         />
@@ -90,6 +214,9 @@ const FormComponent = () => {
                       >
                         <Form.Control
                           type="number"
+                          name="other_business_number"
+                          value={formData.other_business_number}
+                          onChange={handleChange}
                           placeholder="Number of Other business"
                           required
                         />
@@ -109,6 +236,9 @@ const FormComponent = () => {
                       >
                         <Form.Control
                           type="date"
+                          name="commencement_date"
+                          value={formData.commencement_date}
+                          onChange={handleChange}
                           placeholder="Date of Commencement"
                           required
                         />
@@ -128,6 +258,9 @@ const FormComponent = () => {
                       >
                         <Form.Control
                           type="date"
+                          name="renewal_date"
+                          value={formData.renewal_date}
+                          onChange={handleChange}
                           placeholder="Effective date of Renewal"
                           required
                         />
@@ -147,6 +280,9 @@ const FormComponent = () => {
                       >
                         <Form.Control
                           type="text"
+                          name="business_nature"
+                          value={formData.business_nature}
+                          onChange={handleChange}
                           placeholder="General Nature of business"
                           required
                         />
@@ -166,6 +302,9 @@ const FormComponent = () => {
                       >
                         <Form.Control
                           type="text"
+                          name="business_of_nature"
+                          value={formData.business_of_nature}
+                          onChange={handleChange}
                           placeholder="General Nature of business"
                           required
                         />
@@ -185,6 +324,9 @@ const FormComponent = () => {
                       >
                         <Form.Control
                           type="text"
+                          name="business_address"
+                          value={formData.business_address}
+                          onChange={handleChange}
                           placeholder="Principal Address of the Business"
                           required
                         />
@@ -204,6 +346,9 @@ const FormComponent = () => {
                       >
                         <Form.Control
                           type="text"
+                          name="contact_information"
+                          value={formData.contact_information}
+                          onChange={handleChange}
                           placeholder="Contact Information"
                           required
                         />
@@ -224,6 +369,9 @@ const FormComponent = () => {
                       >
                         <Form.Control
                           type="text"
+                          name="business_branches"
+                          value={formData.business_branches}
+                          onChange={handleChange}
                           placeholder="Branches for the Business"
                           required
                         />
@@ -242,12 +390,20 @@ const FormComponent = () => {
                         controlId="registrationNumber"
                         className="mb-0"
                       >
-                        <Form.Control type="text" placeholder="" required />
+                        <Form.Control
+                          type="text"
+                          name="change_name"
+                          value={formData.change_name}
+                          onChange={handleChange}
+                          placeholder=""
+                          required
+                        />
                       </Form.Group>
                     </Col>
                   </Row>
                 </Form>
               </Tab.Pane>
+
               <Tab.Pane eventKey="certification">
                 <Form>
                   <Row className="mb-3">
@@ -263,7 +419,7 @@ const FormComponent = () => {
                         className="mb-0"
                       >
                         <Form.Control
-                          type="text"
+                          type="text" 
                           placeholder="Enter registration number"
                           required
                         />
@@ -583,7 +739,6 @@ const FormComponent = () => {
                   </Form.Group>
                 </Form>
               </Tab.Pane>
-
               <Tab.Pane eventKey="declaration">
                 <Form>
                   <Row className="mb-3">
@@ -609,12 +764,10 @@ const FormComponent = () => {
               </Tab.Pane>
               <Tab.Pane eventKey="signature">
                 <Form>
-
-
-                <Row className="mb-3">
+                  <Row className="mb-3">
                     <Col md={6} className="d-flex align-items-center">
                       <Form.Label className="mb-0">
-                      Signatory Details
+                        Signatory Details
                       </Form.Label>
                     </Col>
                     <Col md={6}>
@@ -622,15 +775,19 @@ const FormComponent = () => {
                         controlId="registrationNumber"
                         className="mb-0"
                       >
-                        <Form.Control type="text" placeholder="Signatory Details" required />
+                        <Form.Control
+                          type="text"
+                          placeholder="Signatory Details"
+                          required
+                        />
                       </Form.Group>
                     </Col>
                   </Row>
 
-                <Row className="mb-3">
+                  <Row className="mb-3">
                     <Col md={6} className="d-flex align-items-center">
                       <Form.Label className="mb-0">
-                      Checkbox Signature
+                        Checkbox Signature
                       </Form.Label>
                     </Col>
                     <Col md={6}>
@@ -638,47 +795,66 @@ const FormComponent = () => {
                         controlId="registrationNumber"
                         className="mb-0"
                       >
-                        <Form.Control type="text" placeholder="Checkbox Signature" required />
+                        <Form.Control
+                          type="text"
+                          placeholder="Checkbox Signature"
+                          required
+                        />
                       </Form.Group>
                     </Col>
                   </Row>
                   <Form>
-                  <Form.Group controlId="fileUpload" className="mb-3">
-                    <Form.Label>Upload File</Form.Label>
-                    <Form.Control type="file" />
-                    <Form.Text className="text-muted">
-                      Please upload any necessary attachments here.
-                    </Form.Text>
-                  </Form.Group>
-                </Form>
-                <Row className="mb-3">
+                    <Form.Group controlId="fileUpload" className="mb-3">
+                      <Form.Label>Upload File</Form.Label>
+                      <Form.Control type="file" />
+                      <Form.Text className="text-muted">
+                        Please upload any necessary attachments here.
+                      </Form.Text>
+                    </Form.Group>
+                  </Form>
+                  <Row className="mb-3">
                     <Col md={6} className="d-flex align-items-center">
-                      <Form.Label className="mb-0">
-                      Secret Phrase
-                      </Form.Label>
+                      <Form.Label className="mb-0">Secret Phrase</Form.Label>
                     </Col>
                     <Col md={6}>
                       <Form.Group
                         controlId="registrationNumber"
                         className="mb-0"
                       >
-                        <Form.Control type="text" placeholder="Secret Phrase" required />
+                        <Form.Control
+                          type="text"
+                          placeholder="Secret Phrase"
+                          required
+                        />
                       </Form.Group>
                     </Col>
                   </Row>
-
-
                 </Form>
               </Tab.Pane>
             </Tab.Content>
+            <div className="mt-4 d-flex justify-content-center ">
+              <Button
+                className="mr-5"
+                variant="secondary"
+                disabled={tabs.indexOf(activeTab) === 0}
+                onClick={handlePrev}
+              >
+                Previous
+              </Button>
+              <Button
+                variant="primary"
+                disabled={tabs.indexOf(activeTab) === tabs.length - 1}
+                onClick={handleNext}
+              >
+                Next
+              </Button>
+            </div>
           </Col>
         </Row>
       </Tab.Container>
-      <Button variant="primary" type="submit" className="mt-3">
-        Submit
-      </Button>
     </Container>
   );
 };
 
 export default FormComponent;
+//correct code
