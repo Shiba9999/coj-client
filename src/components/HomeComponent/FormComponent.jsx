@@ -11,6 +11,7 @@ import {
 } from "react-bootstrap";
 
 const FormComponent = () => {
+  const [activeTab, setActiveTab] = useState("business-info");
   const [formData, setFormData] = useState({
     registration_number: "",
     business_name: "",
@@ -25,6 +26,44 @@ const FormComponent = () => {
     change_name: "",
   });
 
+  const [certificationData, setCertificationData] = useState({
+    certification_provided: "",
+    field_or_profession: "",
+    expiry_date: "",
+    certifying_body: "",
+    certification: "",
+    certificate_number: "",
+  });
+
+  const [workPermitData, setWorkPermitData] = useState({
+    permit_required: "",
+    permit_number: "",
+    expiry_date: "",
+  });
+
+  const [perticularApplicant,setPerticularApplicant]=useState({
+    permit_required: "",  
+    former_christian_name:"",
+    former_surname:"",
+    place_of_residence:"",
+    contact_info:"",
+    other_bussiness_occupation:"",
+    present_nationality:"",
+    nationality_of_origin:""
+  })
+
+  const [attachmentFile,setAttachmentFile]=useState({
+    file_upload: ""
+  })
+
+  const [declaration,setDeclaration]=useState("")
+  const [signature,setSignature]=useState({
+    signatory_details:"",
+    checkbox_signature:"",
+    file_upload:"",
+    secret_phrase:"",
+  })
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -32,7 +71,49 @@ const FormComponent = () => {
       [name]: value,
     });
   };
-console.log("formData",formData);
+  const certificationDataChange = (e) => {
+    const { name, value } = e.target;
+    setCertificationData({
+      ...certificationData,
+      [name]: value,
+    });
+  };
+  const permitChangeHandler = (e) => {
+    const { name, value } = e.target;
+    setWorkPermitData({
+      ...workPermitData,
+      [name]: value,
+    });
+  };
+  const applicantChangeHandler=(e)=>{
+    const { name, value } = e.target;
+    setPerticularApplicant({
+      ...perticularApplicant,
+      [name]:value
+    })
+  }
+  const handleFileChange = (e) => {
+    
+    const { name, value } = e.target;
+    setAttachmentFile({
+      ...attachmentFile,
+      [name]:value
+    })
+    // setAttachmentFile({ ...attachmentFile, file_upload: event.target.files[0] });
+  };
+  const handleDeclarationChange = (event) => {
+    setDeclaration(event.target.value);
+  };
+  const signatureChangeHandler =(e)=>{
+    const { name, value } = e.target;
+    setSignature({
+      ...signature,
+      [name]:value
+    })
+  }
+  
+  
+
   const calculatePercentage = () => {
     const {
       registration_number,
@@ -63,7 +144,89 @@ console.log("formData",formData);
     return Math.ceil((filledFields / 11) * 100); // Adjusted for 11 fields in "Business Information" tab
   };
 
-  const [activeTab, setActiveTab] = useState("business-info");
+  const certificationPercentage = () => {
+    const {
+      certification_provided,
+      field_or_profession,
+      expiry_date,
+      certifying_body,
+      certification,
+      certificate_number,
+    } = certificationData;
+    const filledFields = [
+      certification_provided,
+      field_or_profession,
+      expiry_date,
+      certifying_body,
+      certification,
+      certificate_number,
+    ].filter((field) => field !== "").length;
+    return Math.ceil((filledFields / 6) * 100);
+  };
+  const workPermitPercentage = () => {
+    const { permit_required, permit_number, expiry_date } = workPermitData;
+    const filledFields = [permit_required, permit_number, expiry_date].filter(
+      (field) => field !== ""
+    ).length;
+    return Math.ceil((filledFields / 3) * 100);
+  };
+  const applicantPercentage=()=>{
+    const {
+      permit_required,
+      former_christian_name,
+      former_surname,
+      place_of_residence,
+      contact_info,
+      other_bussiness_occupation,
+      present_nationality,
+      nationality_of_origin,
+    }=perticularApplicant
+    const filledFields = [
+      permit_required,
+      former_christian_name,
+      former_surname,
+      place_of_residence,
+      contact_info,
+      other_bussiness_occupation,
+      present_nationality,
+      nationality_of_origin,
+    ].filter((field) => field !== "").length;
+    return Math.ceil((filledFields / 8) * 100);
+  }
+
+  const attachmentFilePercentage=()=>{
+    const   {file_upload}=attachmentFile
+    const filledFields=[
+      file_upload
+    ].filter((field) => field !== "").length;
+    return Math.ceil((filledFields / 1) * 100);
+  }
+
+  const declarationPercentage=()=>{
+    const filledFields=[
+      declaration
+    ].filter((field) => field !== "").length;
+    return Math.ceil((filledFields / 1) * 100);
+  }
+
+  const signaturePercentage=()=>{
+    const {
+      signatory_details,
+      checkbox_signature,
+      file_upload,
+     secret_phrase,
+    }=signature
+    const filledFields = [
+      signatory_details,
+      checkbox_signature,
+      file_upload,
+     secret_phrase,
+    ].filter((field) => field !== "").length;
+    return Math.ceil((filledFields / 4) * 100);
+  
+  }
+  
+
   const tabs = [
     "business-info",
     "certification",
@@ -110,6 +273,10 @@ console.log("formData",formData);
               onClick={() => setActiveTab("certification")}
             >
               Certification
+              <ProgressBar
+                now={certificationPercentage()}
+                label={`${certificationPercentage()}%`}
+              />
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
@@ -118,6 +285,10 @@ console.log("formData",formData);
               onClick={() => setActiveTab("work-permit")}
             >
               Work Permit
+              <ProgressBar
+                now={workPermitPercentage()}
+                label={`${workPermitPercentage()}%`}
+              />
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
@@ -126,6 +297,10 @@ console.log("formData",formData);
               onClick={() => setActiveTab("particulars-of-applicant")}
             >
               Particulars of Applicant
+              <ProgressBar
+                now={applicantPercentage()}
+                label={`${applicantPercentage()}%`}
+              />
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
@@ -134,6 +309,10 @@ console.log("formData",formData);
               onClick={() => setActiveTab("attachments")}
             >
               Attachments
+              <ProgressBar
+                now={attachmentFilePercentage()}
+                label={`${attachmentFilePercentage()}%`}
+              />
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
@@ -142,6 +321,10 @@ console.log("formData",formData);
               onClick={() => setActiveTab("declaration")}
             >
               Declaration
+              <ProgressBar
+                now={declarationPercentage()}
+                label={`${declarationPercentage()}%`}
+              />
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
@@ -150,6 +333,10 @@ console.log("formData",formData);
               onClick={() => setActiveTab("signature")}
             >
               Signature
+              <ProgressBar
+                now={signaturePercentage()}
+                label={`${signaturePercentage()}%`}
+              />
             </Nav.Link>
           </Nav.Item>
         </Nav>
@@ -419,7 +606,10 @@ console.log("formData",formData);
                         className="mb-0"
                       >
                         <Form.Control
-                          type="text" 
+                          type="text"
+                          name="certification_provided"
+                          value={certificationData.certification_provided}
+                          onChange={certificationDataChange}
                           placeholder="Enter registration number"
                           required
                         />
@@ -439,6 +629,9 @@ console.log("formData",formData);
                       >
                         <Form.Control
                           type="text"
+                          name="field_or_profession"
+                          value={certificationData.field_or_profession}
+                          onChange={certificationDataChange}
                           placeholder="Field or Profession"
                           required
                         />
@@ -456,6 +649,9 @@ console.log("formData",formData);
                       >
                         <Form.Control
                           type="date"
+                          name="expiry_date"
+                          value={certificationData.expiry_date}
+                          onChange={certificationDataChange}
                           placeholder=" Expiry Date"
                           required
                         />
@@ -476,6 +672,9 @@ console.log("formData",formData);
                       >
                         <Form.Control
                           type="text"
+                          name="certifying_body"
+                          value={certificationData.certifying_body}
+                          onChange={certificationDataChange}
                           placeholder=" Certifying Body"
                           required
                         />
@@ -493,6 +692,9 @@ console.log("formData",formData);
                       >
                         <Form.Control
                           type="text"
+                          name="certification"
+                          value={certificationData.certification}
+                          onChange={certificationDataChange}
                           placeholder=" Certification"
                           required
                         />
@@ -513,6 +715,9 @@ console.log("formData",formData);
                       >
                         <Form.Control
                           type="text"
+                          name="certificate_number"
+                          value={certificationData.certificate_number}
+                          onChange={certificationDataChange}
                           placeholder="Certificate number"
                           required
                         />
@@ -534,7 +739,14 @@ console.log("formData",formData);
                         controlId="registrationNumber"
                         className="mb-0"
                       >
-                        <Form.Control type="text" placeholder="" required />
+                        <Form.Control
+                          type="text"
+                          name="permit_required"
+                          value={workPermitData.permit_required}
+                          onChange={permitChangeHandler}
+                          placeholder=""
+                          required
+                        />
                       </Form.Group>
                     </Col>
                   </Row>
@@ -551,6 +763,9 @@ console.log("formData",formData);
                       >
                         <Form.Control
                           type="number"
+                          name="permit_number"
+                          value={workPermitData.permit_number}
+                          onChange={permitChangeHandler}
                           placeholder="Work permit number"
                           required
                         />
@@ -570,6 +785,9 @@ console.log("formData",formData);
                       >
                         <Form.Control
                           type="date"
+                          name="expiry_date"
+                          value={workPermitData.expiry_date}
+                          onChange={permitChangeHandler}
                           placeholder=" Expiry date of work permit"
                           required
                         />
@@ -591,7 +809,13 @@ console.log("formData",formData);
                         controlId="registrationNumber"
                         className="mb-0"
                       >
-                        <Form.Control type="text" placeholder="" required />
+                        <Form.Control
+                         type="text"
+                         name="permit_required"
+                         value={perticularApplicant.permit_required}
+                         onChange={applicantChangeHandler}
+                          placeholder="" 
+                          required />
                       </Form.Group>
                     </Col>
                   </Row>
@@ -608,6 +832,9 @@ console.log("formData",formData);
                       >
                         <Form.Control
                           type="text"
+                          name="former_christian_name"
+                          value={perticularApplicant.former_christian_name}
+                          onChange={applicantChangeHandler}
                           placeholder="Former Christian name"
                           required
                         />
@@ -625,6 +852,9 @@ console.log("formData",formData);
                       >
                         <Form.Control
                           type="text"
+                          name="former_surname"
+                          value={perticularApplicant.former_surname}
+                          onChange={applicantChangeHandler}
                           placeholder="Former Surname"
                           required
                         />
@@ -644,6 +874,9 @@ console.log("formData",formData);
                       >
                         <Form.Control
                           type="text"
+                          name="place_of_residence"
+                          value={perticularApplicant.place_of_residence}
+                          onChange={applicantChangeHandler}
                           placeholder="Place of residence"
                           required
                         />
@@ -663,6 +896,9 @@ console.log("formData",formData);
                       >
                         <Form.Control
                           type="text"
+                          name="contact_info"
+                          value={perticularApplicant.contact_info}
+                          onChange={applicantChangeHandler}
                           placeholder="Contact Information"
                           required
                         />
@@ -682,6 +918,9 @@ console.log("formData",formData);
                       >
                         <Form.Control
                           type="text"
+                          name="other_bussiness_occupation"
+                          value={perticularApplicant.other_bussiness_occupation}
+                          onChange={applicantChangeHandler}
                           placeholder="Other Business Occupation"
                           required
                         />
@@ -701,6 +940,9 @@ console.log("formData",formData);
                       >
                         <Form.Control
                           type="text"
+                          name="present_nationality"
+                          value={perticularApplicant.present_nationality}
+                          onChange={applicantChangeHandler}
                           placeholder="Present Nationality"
                           required
                         />
@@ -720,6 +962,9 @@ console.log("formData",formData);
                       >
                         <Form.Control
                           type="text"
+                          name="nationality_of_origin"
+                          value={perticularApplicant.nationality_of_origin}
+                          onChange={applicantChangeHandler}
                           placeholder="Nationality of Origin"
                           required
                         />
@@ -732,7 +977,18 @@ console.log("formData",formData);
                 <Form>
                   <Form.Group controlId="fileUpload" className="mb-3">
                     <Form.Label>Upload File</Form.Label>
-                    <Form.Control type="file" />
+                    <Form.Control
+                      style={{
+                        height: "96px",
+                        width: "100%", // Set the width to fill the entire column
+                        whiteSpace: "pre-wrap", // Allow text to wrap
+                      }}
+                    name="file_upload"
+                    value={attachmentFile.file_upload}
+                    onChange={handleFileChange}
+                    type="file"
+                    
+                    />
                     <Form.Text className="text-muted">
                       Please upload any necessary attachments here.
                     </Form.Text>
@@ -753,6 +1009,9 @@ console.log("formData",formData);
                             width: "100%", // Set the width to fill the entire column
                             whiteSpace: "pre-wrap", // Allow text to wrap
                           }}
+                          name="declaration"
+                          value={declaration}
+                          onChange={handleDeclarationChange}
                           as="textarea" // Use textarea for multi-line input
                           placeholder="Declaration"
                           required
@@ -777,6 +1036,9 @@ console.log("formData",formData);
                       >
                         <Form.Control
                           type="text"
+                          name="signatory_details"
+                          value={signature.signatory_details}
+                          onChange={signatureChangeHandler}
                           placeholder="Signatory Details"
                           required
                         />
@@ -797,6 +1059,9 @@ console.log("formData",formData);
                       >
                         <Form.Control
                           type="text"
+                          name="checkbox_signature"
+                          value={signature.checkbox_signature}
+                          onChange={signatureChangeHandler}
                           placeholder="Checkbox Signature"
                           required
                         />
@@ -806,7 +1071,17 @@ console.log("formData",formData);
                   <Form>
                     <Form.Group controlId="fileUpload" className="mb-3">
                       <Form.Label>Upload File</Form.Label>
-                      <Form.Control type="file" />
+                      <Form.Control 
+                      
+                      style={{
+                        height: "96px",
+                        width: "100%", // Set the width to fill the entire column
+                        whiteSpace: "pre-wrap", // Allow text to wrap
+                      }}
+                      name="file_upload"
+                      value={signature.file_upload}
+                      onChange={signatureChangeHandler}
+                      type="file" />
                       <Form.Text className="text-muted">
                         Please upload any necessary attachments here.
                       </Form.Text>
@@ -823,6 +1098,10 @@ console.log("formData",formData);
                       >
                         <Form.Control
                           type="text"
+                          name="secret_phrase"
+                          value={signature.secret_phrase}
+                          onChange={signatureChangeHandler}
+
                           placeholder="Secret Phrase"
                           required
                         />
